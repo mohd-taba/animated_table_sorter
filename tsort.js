@@ -42,6 +42,7 @@ Array - Specifc table
 			var table = $(this); // The table element we are manipulating
 			var animating = false; // Keep track of animation
 			
+			
 			/* PERFORM INITIALIZATION */
 			if (settings['rowspan'] == true) { // Fix table data cells with rowspans larger than 1
 				rowspan();
@@ -84,7 +85,10 @@ Array - Specifc table
 				
 				/* PUT TABLE DATA INTO AN OBJECT ARRAY */
 				$(table).find('tr').each(function(index) {
-					if (index > 0) $(this).addClass('tsort_id-' + (index - 1)); // Add a class to each tr that corresponds with the object id (tsortid-0)
+					if (index > 0) {
+						$(this).removeClass(function (index, className) {return (className.match (/(^|\s)tsort_id-\S+/g) || []).join(' ');})
+						$(this).addClass('tsort_id-' + (index - 1)); // Add a class to each tr that corresponds with the object id (tsortid-0)
+					}
 					$(this).find('td').each(function (td_index) {
 						if ($(this).is(":first-child")) {
 							table_data.push(new Object());
@@ -192,9 +196,13 @@ Array - Specifc table
 				}
 				
 				th_index_selected = $(this).index();
-				if (table_data.length == 0) { // Get the table data if we haven't already
-					getTableData();
-				}
+				
+				// Get the table data if we haven't already
+				table_data = new Array();
+				sorted_table_data = new Array();
+				getTableData();
+
+				
 				
 				if (!sorted_table_data[th_index_selected]) {	// If we haven't sorted this column yet
 						sorted_table_data[th_index_selected] = table_data.concat(); // Make a copy of the original table data
